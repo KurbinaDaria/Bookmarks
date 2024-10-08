@@ -73,3 +73,14 @@ class BookmarkFavorite(APIView):
         bookmark.is_favorite = not bookmark.is_favorite
         bookmark.save()
         return Response({'favorite': bookmark.is_favorite}, status=status.HTTP_200_OK)
+
+
+class BookmarkSearchById(APIView):
+    def get(self, request, id):
+        try:
+            bookmark = Bookmark.objects.get(pk=id)
+        except Bookmark.DoesNotExist:
+            return Response({"error": "Bookmark not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = BookmarkSerializer(bookmark)
+        return Response(serializer.data, status=status.HTTP_200_OK)
