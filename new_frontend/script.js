@@ -13,21 +13,21 @@ $(document).ready(function () {
     });
 
     $('#bookmark-form').submit(function (e) {
-        e.preventDefault();  // Prevent default form submission
+        e.preventDefault();
 
         const url = $('#url').val();
         const title = $('#title').val();
-        const category = $('#category').val() || null; // Set to null if empty
+        const category = $('#category').val() || null;
 
         $.ajax({
             type: 'POST',
-            url: 'http://127.0.0.1:8000/api/bookmarks/',  // Your API endpoint
+            url: 'http://127.0.0.1:8000/api/bookmarks/',
             data: JSON.stringify({ url, title, category }),
             contentType: 'application/json',
             success: function () {
                 alert('Bookmark added successfully!');
-                $('#bookmark-form')[0].reset(); // Clear form inputs
-                fetchBookmarks();  // Refresh bookmarks list after adding
+                $('#bookmark-form')[0].reset();
+                fetchBookmarks();
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 console.error('Error adding bookmark:', textStatus, errorThrown);
@@ -103,7 +103,7 @@ $(document).ready(function () {
 
         $('.edit-bookmark').click(function () {
             const id = $(this).data('id');
-            fetchBookmark(id);  // Fetch and pre-fill the form with bookmark details
+            fetchBookmark(id);
         });
     }
 
@@ -113,7 +113,7 @@ $(document).ready(function () {
             url: `http://127.0.0.1:8000/api/bookmarks/${id}/`,
             success: function () {
                 alert('Bookmark deleted successfully!');
-                fetchBookmarks();  // Refresh bookmarks list after deletion
+                fetchBookmarks();
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 console.error('Error deleting bookmark:', textStatus, errorThrown);
@@ -128,7 +128,7 @@ $(document).ready(function () {
             url: `http://127.0.0.1:8000/api/bookmarks/${id}/favorite/`,
             success: function (data) {
                 alert(`Bookmark marked as ${data.favorite ? 'favorite' : 'not favorite'}`);
-                fetchBookmarks();  // Refresh bookmarks list after toggling
+                fetchBookmarks();
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 console.error('Error toggling favorite:', textStatus, errorThrown);
@@ -142,19 +142,16 @@ $(document).ready(function () {
             type: 'GET',
             url: `http://127.0.0.1:8000/api/bookmarks/${id}/`,
             success: function (bookmark) {
-                // Fill the form with the bookmark details
                 $('#url').val(bookmark.url);
                 $('#title').val(bookmark.title);
                 $('#category').val(bookmark.category);
 
-                // Show the form and hide the bookmark list
                 $('#bookmarks-list').hide();
                 $('#add-bookmark-form').show();
 
-                // Change the form behavior to update the bookmark instead of adding a new one
                 $('#bookmark-form').off('submit').submit(function (e) {
-                    e.preventDefault();  // Prevent default form submission
-                    updateBookmark(id);  // Call update function instead of add
+                    e.preventDefault();
+                    updateBookmark(id);
                 });
             },
             error: function () {
@@ -166,17 +163,17 @@ $(document).ready(function () {
     function updateBookmark(id) {
         const url = $('#url').val();
         const title = $('#title').val();
-        const category = $('#category').val() || null;  // Set to null if empty
+        const category = $('#category').val() || null;
 
         $.ajax({
-            type: 'PATCH',  // You can also use 'PUT' if your API supports full updates
+            type: 'PATCH',
             url: `http://127.0.0.1:8000/api/bookmarks/${id}/`,
             data: JSON.stringify({ url, title, category }),
             contentType: 'application/json',
             success: function () {
                 alert('Bookmark updated successfully!');
-                $('#bookmark-form')[0].reset();  // Clear the form
-                fetchBookmarks();  // Refresh bookmarks list after updating
+                $('#bookmark-form')[0].reset();
+                fetchBookmarks();
                 $('#add-bookmark-form').hide();
                 $('#bookmarks-list').show();
             },
@@ -195,4 +192,36 @@ $(document).ready(function () {
         $('#bookmarks-list').hide();
         $('#add-bookmark-form').hide();
     });
+
+    // Search functionality for bookmark by ID
+    $('#search-bookmark-btn').click(function(e) {
+    e.preventDefault();
+    const bookmarkId = $('#bookmark-id').val();
+
+    if (bookmarkId) {
+        $.ajax({
+            url: `http://127.0.0.1:8000/api/bookmarks/${bookmarkId}/`,
+            type: 'GET',
+            success: function(data) {
+                $('#result-content').html(`
+                    <p>ID: ${data.id}</p>
+                    <p>Title: ${data.title}</p>
+                    <p>Category: ${data.category || 'Без категорії'}</p>
+                    <p>Is Favorite: ${data.is_favorite ? 'Так' : 'Ні'}</p>
+                `);
+                $('#search-result').show();
+            },
+            error: function(xhr) {
+                if (xhr.status === 404) {
+                    $('#result-content').html(`<p style="color:red;">Закладка не знайдена (404).</p>`);
+                } else {
+                    $('#result-content').html(`<p style="color:red;">Сталася помилка: ${xhr.statusText}</p>`);
+                }
+                $('#search-result').show();
+            }
+        });
+    } else {
+        alert("Будь ласка, введіть дійсний ID закладки");
+    }
+});
 });
