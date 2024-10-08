@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookmarks Manager</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div>
+        <h1>Bookmarks Manager</h1>
+        <button id="add-bookmark">Add Bookmark</button>
+        <button id="view-bookmarks">View Bookmarks</button>
+    </div>
+
+    <div id="search-bookmark">
+        <input type="text" id="bookmark-id" placeholder="Enter Bookmark ID">
+        <button id="search-bookmark-btn">Search Bookmark</button>
+    </div>
+
+    <div id="search-result" style="display:none;">
+        <div id="result-content"></div>
+    </div>
+
+
+
+
+    <div id="add-bookmark-form" style="display:none;">
+        <h2>Add Bookmark</h2>
+        <form id="bookmark-form">
+            <input type="text" id="url" placeholder="Enter URL" required>
+            <input type="text" id="title" placeholder="Enter Title" required>
+            <input type="text" id="category" placeholder="Enter Category (optional)">
+            <button type="submit">Add Bookmark</button>
+            <button type="button" id="cancel-add">Cancel</button>
+        </form>
+    </div>
+
+    <div id="bookmarks-list" style="display:none;">
+        <h2>Your Bookmarks</h2>
+        <div id="bookmarks"></div>
+        <button id="back-to-main">Back</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
